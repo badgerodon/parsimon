@@ -1,0 +1,189 @@
+grammar Parsimon
+  rule program
+    (space+ block / block) space* <Program> {
+      def before(env)
+        env.push(:blocks, [])
+      end
+      def after(env)
+        @block = env.pop(:blocks).first
+      end
+    }
+  end
+
+  rule block
+    statement* {
+      def before(env)
+        env.push(:statements, [])
+      end
+      def after(env)
+        env.peek(:blocks) << {
+          :statements => env.pop(:statements)
+        }
+      end
+    }
+  end
+  rule statement
+    record_definition / return_statement / assignment
+  end
+
+  rule record_definition
+    "record" space+ type_identifier space+ '{'
+      space* (record_definition_field (',' space* record_definition_field)*)?
+    '}' {
+      def before(env)
+        env.push(:fields, [])
+      end
+      def after(env)
+        env.peek(:statements) << {
+          :type => :record_definition,
+          :name => type_identifier.text_value,
+          :fields => env.pop(:fields)
+        }
+      end
+    }
+  end
+  rule record_definition_field
+    variable_identifier (space+ type_definition)? space* {
+      def before(env)
+        env.push(:type_definitions, [])
+      end
+      def after(env)
+        env.peek(:fields) << {
+          :name => variable_identifier.text_value,
+          :type => env.pop(:type_definitions).first || 'Value'
+        }
+      end
+    }
+  end
+  rule return_statement
+    'ret' space+ expression space* {
+      def before(env)
+        env.push(:expressions, [])
+      end
+      def after(env)
+        env.peek(:statements) << {
+          :type => :return,
+          :expression => env.pop(:expressions).first
+        }
+      end
+    }
+  end
+  rule assignment
+    (type_identifier '.')* variable_identifier space* '=' space* expression space* {
+      def before(env)
+        env.push(:expressions, [])
+      end
+      def after(env)
+        env.peek(:statements) << {
+          :type => :assignment,
+          :namespace => if elements[0] == variable_identifier
+            []
+          else
+            elements[0].elements.select { |x| x.text_value != '.' }.map { |x| x.text_value }
+          end,
+          :name => variable_identifier.text_value,
+          :expression => env.pop(:expressions).first
+        }
+      end
+    }
+  end
+
+  rule expression
+    member_access
+  end
+  rule member_access
+    primary_expression ('.' member_access)* {
+      def before(env)
+        env.push(:expressions, [])
+      end
+      def after(env)
+        exps = env.pop(:expressions)
+        if exps.size > 1
+          env.peek(:expressions) << {
+            :type => :member_access,
+            :expressions => exps
+          }
+        else
+          env.peek(:expressions) << exps[0]
+        end
+      end
+    }
+  end
+  rule primary_expression
+    function / string_literal / numeric_literal / reference / paren_expression
+  end
+  rule paren_expression
+    '(' space* expression space* ')' {
+      def before(env)
+        env.push(:expressions, [])
+      end
+      def after(env)
+        exp = env.pop(:expressions).first
+        env.peek(:expressions) << exp
+      end
+    }
+  end
+  rule reference
+    type_identifier / variable_identifier {
+      def after(env)
+        env.peek(:expressions) << {
+          :type => :reference,
+          :name => text_value
+        }
+      end
+    }
+  end
+  rule function
+    'func(' space* ')' space* '{'
+      space* block
+    '}' {
+      def before(env)
+        env.push(:blocks, [])
+      end
+      def after(env)
+        env.peek(:expressions) << {
+          :type => :function,
+          :block => env.pop(:blocks).first
+        }
+      end
+    }
+  end
+  rule numeric_literal
+    ([1-9] [0-9]* / '0') {
+      def after(env)
+        env.peek(:expressions) << {
+          :type => :numeric_literal,
+          :value => text_value
+        }
+      end
+    }
+  end
+  rule string_literal
+    '"' ((!'"' .) / '\\"')* '"' {
+      def after(env)
+        env.peek(:expressions) << {
+          :type => :string_literal,
+          :value => text_value
+        }
+      end
+    }
+  end
+
+  rule type_definition
+    (('^' type_identifier) / type_identifier) {
+      def after(env)
+        env.peek(:type_definition) << text_value
+      end
+    }
+  end
+  rule type_identifier
+    [A-Z] [a-zA-Z0-9_]*
+  end
+  rule variable_identifier
+    [a-z] [a-zA-Z0-9_]*
+  end
+
+  rule space
+    [ \t\n\r]
+  end
+end
