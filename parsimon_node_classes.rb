@@ -20,12 +20,13 @@ module Parsimon
 		def compile
 			env = Environment.new
 			walk(env)
+			pp self
 			src = []
 			src << "%Primitive.Integer = type i64"
 			src << "%Primitive.Float = type double"
 			src << "%Primitive.Boolean = type i1"
 			src << "%Primitive.Value = type { i32, i32, i8* }"
-			pp @block
+			pp @expressions
 			#env[:record_definitions].map do |name, fields|
 			#	src << "%Record.#{name} = type { " +
 			#		fields.map do |f|
@@ -65,6 +66,7 @@ define i32 @main() {
 }
 			"
 			src.join("\n")
+			""
 		end
 		def walk(env)
 			walker = lambda do |e|

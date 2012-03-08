@@ -6,14 +6,15 @@ require 'pp'
 Treetop.load "parsimon"
 
 s1 = "
+Node = record { left ^Node, right ^Node, key, value }
 record Node { left ^Node, right ^Node, key, value }
 
 main = 0
 "
 s2 = "
-main = func() {
-  x = \"TEST\".a.b.c.d.e.f.g.h
-	ret 0
+Node = record { left ^Node, right ^Node, key, value }
+main = func(x,y,z) {
+	5 + 11
 }
 "
 
