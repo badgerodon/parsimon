@@ -1,0 +1,63 @@
+info it worked if it ends with ok
+verbose cli [ '/home/cloud9/c9/support/node-c9-builds/bin/node-sunos-v0.6.8-security',
+verbose cli   '/mnt/ws/users/$ca/calebdoxsey/npm/bin/npm-cli.js',
+verbose cli   'install',
+verbose cli   'pegjs' ]
+info using npm@1.0.106
+info using node@v0.6.8
+verbose config file /home/cloud9/.npmrc
+verbose config file /home/cloud9/c9/support/node-c9-builds/etc/npmrc
+verbose config file /mnt/ws/users/$ca/calebdoxsey/npm/npmrc
+verbose into /mnt/ws/users/$ca/calebdoxsey/153487 [ 'pegjs' ]
+verbose cache add pegjs
+verbose cache add [ 'pegjs', null ]
+silly cache add: name, spec, args [ undefined, 'pegjs', [ 'pegjs', null ] ]
+verbose parsed url { pathname: 'pegjs', path: 'pegjs', href: 'pegjs' }
+info addNamed [ 'pegjs', '' ]
+verbose addNamed [ null, '' ]
+verbose GET pegjs
+verbose raw, before any munging pegjs
+verbose url resolving [ 'https://registry.npmjs.org/', './pegjs' ]
+verbose url resolved https://registry.npmjs.org/pegjs
+verbose etag "72MIWWTGJDSCUX0PXZYL88FEA"
+silly get cb [ 304,
+silly get cb   { server: 'CouchDB/1.2.0 (Erlang OTP/R15B)',
+silly get cb     etag: '"72MIWWTGJDSCUX0PXZYL88FEA"',
+silly get cb     date: 'Fri, 09 Mar 2012 21:27:59 GMT',
+silly get cb     'content-length': '0' } ]
+verbose etag pegjs from cache
+verbose GET pegjs/0.6.2
+verbose raw, before any munging pegjs/0.6.2
+verbose url resolving [ 'https://registry.npmjs.org/', './pegjs/0.6.2' ]
+verbose url resolved https://registry.npmjs.org/pegjs/0.6.2
+verbose etag "72MIWWTGJDSCUX0PXZYL88FEA"
+silly get cb [ 304,
+silly get cb   { server: 'CouchDB/1.2.0 (Erlang OTP/R15B)',
+silly get cb     etag: '"72MIWWTGJDSCUX0PXZYL88FEA"',
+silly get cb     date: 'Fri, 09 Mar 2012 21:27:59 GMT',
+silly get cb     'content-length': '0' } ]
+verbose etag pegjs/0.6.2 from cache
+verbose bin dist [ '0.6-ares1.7.5-DEV-evundefined-openssl0.9.8o-v83.6.6.19-sunos-ia32-5.11',
+verbose bin dist   { shasum: '74651f8a800e444db688e4eeae8edb65637a17a5',
+verbose bin dist     tarball: 'http://registry.npmjs.org/pegjs/-/pegjs-0.6.2.tgz' } ]
+verbose addRemoteTarball [ 'https://registry.npmjs.org/pegjs/-/pegjs-0.6.2.tgz',
+verbose addRemoteTarball   '74651f8a800e444db688e4eeae8edb65637a17a5' ]
+verbose mkdir (expected) error ENOENT, no such file or directory '/tmp/npm-1331328479594'
+verbose mkdir (expected) error ENOENT, no such file or directory '/tmp/npm-1331328479594/1331328479594-0.34053522162139416'
+verbose mkdir done: /tmp/npm-1331328479594/1331328479594-0.34053522162139416 755
+info fetch https://registry.npmjs.org/pegjs/-/pegjs-0.6.2.tgz
+verbose fetch to /tmp/npm-1331328479594/1331328479594-0.34053522162139416/tmp.tgz
+ERR! failed to fetch https://registry.npmjs.org/pegjs/-/pegjs-0.6.2.tgz
+ERR! Error: UNKNOWN, unknown error
+ERR! Report this *entire* log at:
+ERR!     <http://github.com/isaacs/npm/issues>
+ERR! or email it to:
+ERR!     <npm-@googlegroups.com>
+ERR! 
+ERR! System SunOS 5.11
+ERR! command "/home/cloud9/c9/support/node-c9-builds/bin/node-sunos-v0.6.8-security" "/mnt/ws/users/$ca/calebdoxsey/npm/bin/npm-cli.js" "install" "pegjs"
+ERR! cwd /mnt/ws/users/$ca/calebdoxsey/153487
+ERR! node -v v0.6.8
+ERR! npm -v 1.0.106
+ERR! code UNKNOWN
+verbose exit [ 1, true ]
