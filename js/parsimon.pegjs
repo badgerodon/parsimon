@@ -13,7 +13,7 @@ expression
   = binary_expression
 
 binary_expression
-  = left:member_expression space* op:(
+  = left:post_expression space* op:(
       "==" / "!=" / "=" / "+"
       / "*" / "-" / "/" / "%"
       / "&&" / "&" / "||" / "|"
@@ -26,59 +26,45 @@ binary_expression
         'op': op
       }
     }
-  / member_expression
+  / post_expression
 
-
-invocation_expression
-  = left:member_expression '(' space* params:parameters? ')' tail:invocation_expression_tail* {
-      return {
-        'type': 'invocation',
-        'left': left,
-        'parameters': params
+post_expression
+  = left:fundamental_expression tail:post_expression_tail+ {
+      var e = tail[0];
+      e.left = left;
+      for (var i=1; i<tail.length; i++) {
+        tail[i].left = e;
+        e = tail[i];
       }
+      return e;
     }
-  / member_expression
+  / fundamental_expression
 
-invocation_expression_tail
-  = '(' params:parameters? ')' {
+post_expression_tail
+  = '(' space* es:parameters? ')' space* {
       return {
         'type': 'invocation',
-        'parameters': params
+        'parameters': es
       };
     }
-  / '.' e:member_expression_member {
+  / '.' e:reference {
       return {
         'type': 'member',
         'right': e
       };
     }
-  / '[' es:expression ']' {
+  / ':' e:reference {
+      return {
+        'type': 'class_member',
+        'right': e
+      }
+    }
+  / '[' space* es:parameters? ']' space* {
       return {
         'type': 'index',
         'parameters': es
       }
     }
-
-member_expression
-  = left:fundamental_expression '.' right:member_expression_member {
-      return {
-        'type': 'member',
-        'left': left,
-        'right': right
-      }
-    }
-  / fundamental_expression
-
-
-member_expression_member
-  = left:reference '.' right:member_expression_member {
-      return {
-        'type': 'member',
-        'left': left,
-        'right': right
-      }
-    }
-  / reference
 
 fundamental_expression
   = record_definition
@@ -89,6 +75,7 @@ fundamental_expression
   / constructor
   / reference
   / numeric_literal
+  / string_literal
 
 record_definition
   = "record" space+ "{" space* fs:record_definition_fields? "}" space* {
@@ -194,7 +181,19 @@ parameters
 
 reference = e:(variable_identifier / type_identifier) space* { return e; }
 
-numeric_literal = ds:[0-9]+ space* { return parseInt(ds.join(''), 10); }
+numeric_literal = ds:[0-9]+ space* {
+    return {
+      'type': 'integer',
+      'value': parseInt(ds.join(''), 10)
+    };
+  }
+
+string_literal = '"' str:[^"]* '"' {
+    return {
+      'type': 'string',
+      'value': str.join("")
+    };
+  }
 
 variable_identifier
   = l:[a-z] ls:[a-zA-Z_0-9]* { return l + ls.join(""); }

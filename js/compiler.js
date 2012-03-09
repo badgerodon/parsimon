@@ -10,29 +10,49 @@ function pp(obj) {
   console.log(util.inspect(obj, true, 100, true));
 }
 
+function get_variable(scope, node) {
+  if (typeof(node) == 'string') {
+    while (scope != null) {
+      if (scope.variables[node]) {
+        return scope.variables[node];
+      }
+      scope = scope.parent;
+    }
+    throw new Exception("Unknown variable: " + node);
+  } else if (node.type == 'member') {
+    
+  }
+}
+
 function process_scope(parent, node, output) {
   var scope = {
     parent: parent,
     depth: parent ? parent.depth+1 : 0,
     node: node,
-    variables: {}
+    
+    records: {},
+    functions: {}
   };
-  output.push('var S' + depth + ' = {};\n');
 
   var vars = {};
   for (var i=0; i<node.expressions.length; i++) {
     var n = node.expressions[i];
     if (n.type == 'binary' && n.op == '=') {
-      // Variable
+      switch(n.right.type) {
+      case 'record':
+        scope.records
+        break;
+      }
+      // Simple variable
       if (typeof(n.left) == 'string') {
-        scope.variables[n.left] = { name: n.left };
+        scope.variables[n.left] = {
+          name: n.left
+        };
+      } else {
+        pp(n.left);
       }
     }
   }
-
-  pp(scope);
-
-  output.push('delete S' + depth + ';\n');
 }
 
 function process_program(node, output) {
