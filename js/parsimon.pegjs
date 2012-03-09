@@ -28,8 +28,39 @@ binary_expression
     }
   / member_expression
 
+
+invocation_expression
+  = left:member_expression '(' space* params:parameters? ')' tail:invocation_expression_tail* {
+      return {
+        'type': 'invocation',
+        'left': left,
+        'parameters': params
+      }
+    }
+  / member_expression
+
+invocation_expression_tail
+  = '(' params:parameters? ')' {
+      return {
+        'type': 'invocation',
+        'parameters': params
+      };
+    }
+  / '.' e:member_expression_member {
+      return {
+        'type': 'member',
+        'right': e
+      };
+    }
+  / '[' es:expression ']' {
+      return {
+        'type': 'index',
+        'parameters': es
+      }
+    }
+
 member_expression
-  = left:fundamental_expression '.' right:member_expression {
+  = left:fundamental_expression '.' right:member_expression_member {
       return {
         'type': 'member',
         'left': left,
@@ -37,6 +68,17 @@ member_expression
       }
     }
   / fundamental_expression
+
+
+member_expression_member
+  = left:reference '.' right:member_expression_member {
+      return {
+        'type': 'member',
+        'left': left,
+        'right': right
+      }
+    }
+  / reference
 
 fundamental_expression
   = record_definition
@@ -134,14 +176,15 @@ if_expression_alternatives
   }
 
 constructor
-  = type:type_identifier space* '{' space* es:constructor_parameters? '}' space* {
+  = type:type_identifier space* '{' space* es:parameters? '}' space* {
     return {
       'type': 'constructor',
       'name': type,
       'arguments': es
     };
   }
-constructor_parameters
+
+parameters
   = e:expression space* es:((',' space* e:expression space*) { return e; })* {
     var arr = [];
     arr.push(e);
