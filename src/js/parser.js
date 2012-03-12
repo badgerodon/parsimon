@@ -1,6 +1,7 @@
 var PEG = require('pegjs'),
   fs = require('fs'),
-  util = require('util');
+  util = require('util'),
+  Locator = require('./locator.js').Locator;
 
 var Parser = function() {
 
@@ -23,14 +24,63 @@ Parser.prototype = {
   /**
    * Transform the raw PEG expression tree into a corresponding language tree
    */
-  _transform: function(expressionTree, callback) {
+  _transform: function(name, data, expressionTree, callback) {
+    var visit = function(parent, exp) {
+      var o = {
+        'locator': new Locator(name, data, exp.pos),
+        'parent': parent
+      };
 
+      switch(exp.type || '') {
+      case 'program':
+        o.type = 'program';
+        o.block = {
+          'type': 'block',
+          'scope': {},
+          'locator': o.locator
+        };
+        o.block.expressions = exp.expressions.map(function(x) { return visit(o.block, x); });
+        break;
+      case 'binary':
+        switch(exp.op) {
+        case '=':
+          o.type = 'assignment';
+          o.left = visit(o, exp.left);
+          o.right = visit(o, exp.right);
+          break;
+        }
+        break;
+      case 'member':
+        o.type = 'member';
+        o.left = visit(o, exp.left);
+        o.right = visit(o, exp.right);
+        break;
+      case 'class_member':
+        o.type = 'class_member';
+        o.left = visit(o, exp.left);
+        o.right = visit(o, exp.right);
+        break;
+      case 'record_definition':
+        o.type = 'record_definition';
+        o.fields = exp.fields;
+        break;
+      case '':
+        o.type = 'identifier';
+        o.value = exp;
+      default:
+        break;
+      }
+      return o;
+    };
+    pp(expressionTree);
+    var tree = visit(null, expressionTree);
+    callback(null, tree);
   },
   /**
    * Parse source code
    * @param {String} data The data to parse
    */
-  parse: function(data, callback) {
+  parse: function(name, data, callback) {
     var self = this;
 
     this._getParser(function(parser) {
@@ -43,13 +93,13 @@ Parser.prototype = {
         for (var i=0; i<e.column-1; i++) {
           s.push(' ');
         }
-        console.error("\n" + argv.i + ":" + e.line + "\n    " + l + "\n    " + s.join('') + "^");
+        console.error("\n" + e.line + "\n    " + l + "\n    " + s.join('') + "^");
         console.error("SyntaxError: " + e.message);
         callback(true, null);
         return;
       }
 
-      self._transform(tree, callback);
+      self._transform(name, data, tree, callback);
     });
   }
 };

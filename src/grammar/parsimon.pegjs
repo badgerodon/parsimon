@@ -5,7 +5,8 @@ program
   = es:expression* space* {
     return {
       'type': 'program',
-      'expressions': es
+      'expressions': es,
+      'pos': pos
     };
   }
 
@@ -23,7 +24,8 @@ binary_expression
         'type': 'binary',
         'left': left,
         'right': right,
-        'op': op
+        'op': op,
+        'pos': pos
       }
     }
   / post_expression
@@ -44,25 +46,29 @@ post_expression_tail
   = '(' space* es:parameters? ')' space* {
       return {
         'type': 'invocation',
-        'parameters': es
+        'parameters': es,
+        'pos': pos
       };
     }
   / '.' e:reference {
       return {
         'type': 'member',
-        'right': e
+        'right': e,
+        'pos': pos
       };
     }
   / ':' e:reference {
       return {
         'type': 'class_member',
-        'right': e
+        'right': e,
+        'pos': pos
       }
     }
   / '[' space* es:parameters? ']' space* {
       return {
         'type': 'index',
-        'parameters': es
+        'parameters': es,
+        'pos': pos
       }
     }
 
@@ -81,7 +87,8 @@ record_definition
   = "record" space+ "{" space* fs:record_definition_fields? "}" space* {
     return {
       'type': 'record_definition',
-      'fields': fs
+      'fields': fs,
+      'pos': pos
     };
   }
 record_definition_fields
@@ -96,7 +103,8 @@ record_definition_field
     return {
       'type': 'record_definition_field',
       'name': name,
-      'type': type
+      'type': type,
+      'pos': pos
     };
   }
 
@@ -105,7 +113,8 @@ function_definition
     return {
       'type': 'function_definition',
       'parameters': ps,
-      'body': es
+      'body': es,
+      'pos': pos
     };
   }
 function_definition_parameters
@@ -120,7 +129,8 @@ function_definition_parameter
     return {
       'type': 'function_definition_parameter',
       'name': name,
-      'type': type
+      'type': type,
+      'pos': pos
     };
   }
 
@@ -128,7 +138,8 @@ return_expression
   = "return" space+ exp:expression space* {
     return {
       'type': 'return',
-      'expression': exp
+      'expression': exp,
+      'pos': pos
     }
   }
 
@@ -137,7 +148,8 @@ while_expression
     return {
       'type': 'while',
       'condition': e,
-      'body': es
+      'body': es,
+      'pos': pos
     };
   }
 
@@ -150,7 +162,8 @@ if_expression
       'condition': c,
       'body': es,
       'alternatives': alt,
-      'else': rest
+      'else': rest,
+      'pos': pos
     };
   }
 if_expression_alternatives
@@ -158,7 +171,8 @@ if_expression_alternatives
     return {
       'type': 'elseif',
       'condition': c,
-      'body': es
+      'body': es,
+      'pos': pos
     }
   }
 
@@ -167,7 +181,8 @@ constructor
     return {
       'type': 'constructor',
       'name': type,
-      'arguments': es
+      'arguments': es,
+      'pos': pos
     };
   }
 
@@ -184,14 +199,16 @@ reference = e:(variable_identifier / type_identifier) space* { return e; }
 numeric_literal = ds:[0-9]+ space* {
     return {
       'type': 'integer',
-      'value': parseInt(ds.join(''), 10)
+      'value': parseInt(ds.join(''), 10),
+      'pos': pos
     };
   }
 
 string_literal = '"' str:[^"]* '"' {
     return {
       'type': 'string',
-      'value': str.join("")
+      'value': str.join(""),
+      'pos': pos
     };
   }
 

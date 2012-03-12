@@ -1,6 +1,7 @@
 var fs = require('fs'),
   Parser = require('./parser.js').Parser,
   JavascriptGenerator = require('./javascript_generator.js').JavascriptGenerator,
+  GeneratorException = require('./generator.js').GeneratorException,
   argv = require('optimist')
     .usage('Usage: $0 -o [output] -i [input]')
     .demand(['o', 'i'])
@@ -12,16 +13,17 @@ fs.readFile(argv.i, 'UTF-8', function(err, input) {
   }
 
   var parser = new Parser();
-  parser.parse(input, function(err, tree) {
+  parser.parse(argv.i, input, function(err, tree) {
     if (err) {
       throw err;
     }
     var generator = new JavascriptGenerator();
     generator.generate(tree, function(err, code) {
       if (err) {
-        throw err;
+        console.error(err.toString());
+        return;
       }
-      console.log(code);
+      console.log("RESULT: ", code);
     });
   });
 });
