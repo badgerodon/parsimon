@@ -1,4 +1,4 @@
-var Generator = require('./generator').Generator;
+var Generator = require('./base').Generator;
 
 var JavascriptGenerator = function() {
   Generator.call(this);

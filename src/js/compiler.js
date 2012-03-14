@@ -1,7 +1,8 @@
 var fs = require('fs'),
   Parser = require('./parser.js').Parser,
-  JavascriptGenerator = require('./javascript_generator.js').JavascriptGenerator,
-  GeneratorException = require('./generator.js').GeneratorException,
+  JavascriptGenerator = require('./generators/javascript.js').JavascriptGenerator,
+  CGenerator = require('./generators/c.js').CGenerator,
+  GeneratorException = require('./generators/base.js').GeneratorException,
   argv = require('optimist')
     .usage('Usage: $0 -o [output] -i [input]')
     .demand(['o', 'i'])
@@ -17,7 +18,7 @@ fs.readFile(argv.i, 'UTF-8', function(err, input) {
     if (err) {
       throw err;
     }
-    var generator = new JavascriptGenerator();
+    var generator = new CGenerator();
     generator.generate(tree, function(err, code) {
       if (err) {
         console.error(err.toString());

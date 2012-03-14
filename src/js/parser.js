@@ -62,7 +62,21 @@ Parser.prototype = {
         break;
       case 'record_definition':
         o.type = 'record_definition';
-        o.fields = exp.fields;
+        o.fields = exp.fields.map(function(x) { return visit(o, x); });
+        break;
+      case 'record_definition_field':
+        o.type = 'record_definition_field';
+        o.type_reference = exp.type_reference;
+        o.name = exp.name;
+        break;
+      case 'function_definition':
+        o.type = 'function_definition';
+        o.parameters = exp.parameters.map(function(x) { return visit(o, x); });
+        break;
+      case 'function_definition_parameter':
+        o.type = 'function_definition_parameter';
+        o.type_reference = exp.type_reference;
+        o.name = exp.name;
         break;
       case '':
         o.type = 'identifier';

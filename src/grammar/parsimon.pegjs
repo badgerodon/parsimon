@@ -103,7 +103,7 @@ record_definition_field
     return {
       'type': 'record_definition_field',
       'name': name,
-      'type': type,
+      'type_reference': type,
       'pos': pos
     };
   }
@@ -112,7 +112,7 @@ function_definition
   = "func" space* "(" space* ps:function_definition_parameters? ")" space* "{" space* es:expression* "}" space* {
     return {
       'type': 'function_definition',
-      'parameters': ps,
+      'parameters': ps || [],
       'body': es,
       'pos': pos
     };
@@ -128,8 +128,8 @@ function_definition_parameter
   = name:variable_identifier type:((space+ t:type_identifier) { return t; })? space* {
     return {
       'type': 'function_definition_parameter',
+      'type_reference': type,
       'name': name,
-      'type': type,
       'pos': pos
     };
   }
