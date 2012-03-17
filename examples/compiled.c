@@ -4,33 +4,34 @@
 #include <gc.h>
 
 // Structs
-struct Any {
-  uint32_t kind;
-  void* ptr;
+struct Value {
+  uint64_t kind;
+  uint64_t value;
 };
-struct Integer {
-  int value;
-};
-struct Float {
-  double value;
-};
-struct Boolean {
-  uint8_t value;
-};
-struct String {
-  uint32_t size;
-  void* value;
-};
+struct Field {
+  uint64_t symbol;
+  struct Value value;
+}
 struct Array {
-  uint32_t kind;
-  uint32_t length;
-  void** values;
-};
-struct HashTable {
-  uint32_t kind_k;
-  uint32_t kind_v;
-  void** values;
-};
+  uint64_t length;
+  struct Field* fields;
+}
+
+void get(struct Value* value, uint64_t symbol, struct Value* result) {
+  if (value->kind == 8) {
+    if (symbol == 0) {
+      (*result) = ((struct S0*)(void*)value->value)->x;
+    }
+  }
+}
+
+int main(void) {
+  GC_INIT();
+  
+  return 0;
+}
+
+/*
 
 
 // Reflection types
@@ -64,7 +65,6 @@ int main(void) {
 }
 
 
-/*
 
 
 

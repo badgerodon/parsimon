@@ -78,6 +78,10 @@ Parser.prototype = {
         o.type_reference = exp.type_reference;
         o.name = exp.name;
         break;
+      case 'address':
+        o.type = 'address';
+        o.value = exp.value;
+        break;
       case '':
         o.type = 'identifier';
         o.value = exp;

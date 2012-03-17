@@ -79,6 +79,7 @@ fundamental_expression
   / while_expression
   / if_expression
   / constructor
+  / address_expression
   / reference
   / numeric_literal
   / string_literal
@@ -87,7 +88,7 @@ record_definition
   = "record" space+ "{" space* fs:record_definition_fields? "}" space* {
     return {
       'type': 'record_definition',
-      'fields': fs,
+      'fields': fs || [],
       'pos': pos
     };
   }
@@ -192,6 +193,14 @@ parameters
     arr.push(e);
     arr.push.apply(arr, es);
     return arr;
+  }
+
+address_expression = '&' space* e:expression {
+    return {
+      'type': 'address',
+      'value': e,
+      'pos': pos
+    };
   }
 
 reference = e:(variable_identifier / type_identifier) space* { return e; }

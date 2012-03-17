@@ -1,10 +1,10 @@
-Node = record { left ^Node, right ^Node, key, value }
-Tree = record { root ^Node, size Integer }
+Node = record { left, right, key, value }
+Tree = record { root, size }
 
 Tree.new = func() {
   return &Tree { nil, 0 }
 }
-Tree.get = func(this ^Tree, key) {
+Tree.get = func(this, key) {
   node = this.root
   while node != nil {
     if node.key == key {
@@ -16,9 +16,9 @@ Tree.get = func(this ^Tree, key) {
     }
   }
 }
-Tree.set = func(this ^Tree, key, value) {
+Tree.set = func(this, key, value) {
   if this.size == 0 {
-    this.root = Node { nil, nil, key, value }
+    this.root = &Node { nil, nil, key, value }
     this.size = 1
   } else {
 

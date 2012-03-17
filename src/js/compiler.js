@@ -2,6 +2,7 @@ var fs = require('fs'),
   Parser = require('./parser.js').Parser,
   JavascriptGenerator = require('./generators/javascript.js').JavascriptGenerator,
   CGenerator = require('./generators/c.js').CGenerator,
+  LLVMGenerator = require('./generators/llvm.js').LLVMGenerator,
   GeneratorException = require('./generators/base.js').GeneratorException,
   argv = require('optimist')
     .usage('Usage: $0 -o [output] -i [input]')
@@ -18,7 +19,7 @@ fs.readFile(argv.i, 'UTF-8', function(err, input) {
     if (err) {
       throw err;
     }
-    var generator = new CGenerator();
+    var generator = new LLVMGenerator();
     generator.generate(tree, function(err, code) {
       if (err) {
         console.error(err.toString());

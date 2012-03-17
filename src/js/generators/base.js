@@ -52,7 +52,7 @@ Generator.prototype = {
           visit(exp.parameters[i]);
         }
         break;
-      case 'function_definition_parameter':
+      case 'function_definition_parameter':/*
         var t = exp.type_reference || 'Any';
         var rt = t.replace(/\^/g, '');
         var e = exp;
@@ -69,7 +69,7 @@ Generator.prototype = {
         }
         if (!e) {
           self.raise(exp, 'Unknown Type: ' + t);
-        }
+        }*/
         break;
       case 'program':
         visit(exp.block);
@@ -79,7 +79,7 @@ Generator.prototype = {
           visit(exp.fields[i]);
         }
         break;
-      case 'record_definition_field':
+      case 'record_definition_field':/*
         var t = exp.type_reference || 'Any';
         var rt = t.replace(/\^/g, '');
         var e = exp;
@@ -96,7 +96,7 @@ Generator.prototype = {
         }
         if (!e) {
           self.raise(exp, 'Unknown Type: ' + t);
-        }
+        }*/
         break;
       }
     };
